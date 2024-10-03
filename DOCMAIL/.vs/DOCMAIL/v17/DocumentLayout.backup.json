@@ -1,12 +1,54 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\st2burgoda\\Desktop\\docmail\\DOCMAIL\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|c:\\users\\st2burgoda\\desktop\\docmail\\docmail\\docmail\\views\\app\\main.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\views\\app\\main.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|c:\\users\\st2burgoda\\desktop\\docmail\\docmail\\docmail\\views\\shared\\layout_app.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\views\\shared\\layout_app.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Main.cshtml",
+              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\docmail\\DOCMAIL\\DOCMAIL\\Views\\App\\Main.cshtml",
+              "RelativeDocumentMoniker": "DOCMAIL\\Views\\App\\Main.cshtml",
+              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\docmail\\DOCMAIL\\DOCMAIL\\Views\\App\\Main.cshtml",
+              "RelativeToolTip": "DOCMAIL\\Views\\App\\Main.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-10-03T15:11:04.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Layout_app.cshtml",
+              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\docmail\\DOCMAIL\\DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
+              "RelativeDocumentMoniker": "DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
+              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\docmail\\DOCMAIL\\DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
+              "RelativeToolTip": "DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-10-03T15:09:59.877Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

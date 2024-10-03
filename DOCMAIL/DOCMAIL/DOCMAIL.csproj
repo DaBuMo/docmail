@@ -186,7 +186,7 @@
     <Content Include="Views\App\Main.cshtml" />
     <Content Include="Views\DM\DataComex.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
-    <Content Include="Views\Shared\lay.cshtml" />
+    <Content Include="Views\Shared\Layout_app.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

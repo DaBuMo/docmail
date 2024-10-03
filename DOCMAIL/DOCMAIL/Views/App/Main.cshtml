@@ -1,5 +1,6 @@
 ﻿@{
     ViewBag.Title = "Main";
+    Layout = "~/Views/Shared/Layout_app.cshtml";
 }
 <div class="container-fluid">
     <div class="row">
@@ -218,11 +219,16 @@
                 });
         }
 
-        document.getElementById("buscadorInvoices").addEventListener("input", guardarNroInvoice);
         document.getElementById("radioEnviados").addEventListener("change", mostrarRegistros);
         document.getElementById("radioPendientes").addEventListener("change", mostrarRegistros);
         document.getElementById("actualizar").addEventListener("click", actualizarRegistros);
         document.getElementById("buscar").addEventListener("click", buscarRegistros);
+        document.getElementById("buscadorInvoices").addEventListener("input", guardarNroInvoice);
+        document.getElementById("buscadorInvoices").addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                buscarRegistros();
+            }
+        });
 
     </script>
 }
