@@ -17,6 +17,8 @@ namespace DOCMAIL.Controllers
 
         /// <summary>
         /// Esta funcion se encarga de llamar a listar todos los invoices que cumplen la misma condicion que tipo de registro,y opcionalmente si se pasa el nroRegistro, usa Like para comparar el nro de Invoice. Posterioriomente se le aplica formato Json a los registros.
+        /// <param name="tipoRegistro">Tipo de registro a buscar (0 = PENDIENTES // 1 = ENVIADOS )</param>
+        /// <param name="nroInvoice">Nro parcial o completo del Commercial Invoice a buscar. Si este valor es "" entonces se listaran todos los invoices segun el valor de tipoRegistro</param>
         /// </summary>
         /// <returns>JsonResult</returns>
         [HttpGet]
