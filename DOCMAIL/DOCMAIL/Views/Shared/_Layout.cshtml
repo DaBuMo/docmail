@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     <link rel="stylesheet" href="~/Content/Styles/Style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif; /* Aplica Montserrat al cuerpo */
+        }
+
+        .form-check-label {
+            font-size: 1.25rem; /* Tamaño de la fuente de las etiquetas */
+            font-family: 'Montserrat', sans-serif; /* Aplica Montserrat a las etiquetas */
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fondo_nav sticky-top navbar-toggleable-sm">

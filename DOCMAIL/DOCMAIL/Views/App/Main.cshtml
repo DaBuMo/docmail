@@ -2,63 +2,79 @@
     ViewBag.Title = "Main";
 }
 <div class="container-fluid">
-
     <div class="row">
-        <div class="col">
-            <div class="text-center mt-3">
-                <button id="actualizar-btn" class="btn btn-primary">Actualizar Registros</button>
-            </div>
-            <div class="form-check">
+        <div class="col text-center mt-2 mb-2">
+            <button id="actualizar" class="btn btn-warning";">Actualizar Commercial Invoices</button>
+        </div>
+    </div>
+
+    <div class="row border mb-3 alert alert-warning">
+        <div class="col-4 d-flex justify-content-center align-items-center" style="height: 50px; padding: 0;" >
+            <h1 class="display-5 mb-0" style="font-size: 1.5rem; text-align: center; width: 100%;">Estado del Invoice:</h1>
+        </div>
+        <div class="col-4 d-flex justify-content-center align-items-center" style="height: 50px;">
+            <div class="form-check text-center">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="radioEnviados">
-                <label class="form-check-label" for="flexRadioDefault1">
+                <label class="form-check-label" for="radioEnviados">
                     Enviados
                 </label>
             </div>
-            <div class="form-check">
+        </div>
+        <div class="col-4 d-flex justify-content-center align-items-center" style="height: 50px;">
+            <div class="form-check text-center">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="radioPendientes">
-                <label class="form-check-label" for="flexRadioDefault2">
+                <label class="form-check-label" for="radioPendientes">
                     Pendientes
                 </label>
             </div>
-            <div class="form-check-inline">
-                <input class="form-control" type="search" placeholder="N°" aria-label="Search" id="buscadorInvoces" />
-            </div>
-        </div>
-        <div class="col">
-            <h1>hola</h1>
         </div>
     </div>
 
     <div class="row">
-        <div id="tabla-container" class="table-responsive" style="height: 600px; overflow-y:auto;">
-            <table id="mi-tabla" class="table caption-top table-striped table-bordered table-hover">
-                <thead style="position: sticky;top: 0" class="text-warning text-bg-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>NUMERO</th>
-                        <th>FECHA</th>
-                        <th>DESTINATARIO</th>
-                        <th>DIRECCION</th>
-                        <th>MAIL</th>
-                        <th>USUARIO</th>
-                        <th>Fecha Ult. Envío</th>
-                        <th>Cantidad Envíos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+        <div class="col-auto mb-1 mt-1">
+            <input class="form-control" type="search" placeholder="N°" aria-label="Search" id="buscadorInvoices" />
+        </div>
+        <div class="col-auto mt-1 mb-1">
+            <button id="buscar" class="btn bg-dark text-warning">Buscar Invoice</button>
+        </div>
+        <div class="col-auto mt-1 mb-1">
+            <button id="descargar" class="btn btn-success ">Descargar</button>
         </div>
     </div>
+
+</div>
+
+
+<div class="row">
+    <div id="tabla-container" class="table-responsive" style="height: 550px; overflow-y:auto;">
+        <table id="mi-tabla" class="table caption-top table-striped table-bordered table-hover">
+            <thead style="position: sticky;top: 0" class="text-warning text-bg-dark">
+                <tr>
+                    <th>#</th>
+                    <th>NUMERO</th>
+                    <th>FECHA</th>
+                    <th>DESTINATARIO</th>
+                    <th>DIRECCION</th>
+                    <th>MAIL</th>
+                    <th>USUARIO</th>
+                    <th>Fecha Ult. Envío</th>
+                    <th>Cantidad Envíos</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
 </div>
 
 
 @section scripts {
     <script type="text/javascript">
 
-        var selectedIds = []
-        var tipoRegistro;
-        var nroInvoice = "";
+        let selectedIds = []
+        let tipoRegistro;
+        let nroInvoice = "";
         const VALOR_ENVIADOS = 1 ;
         const VALOR_PENDIENTES = 0;
 
@@ -68,31 +84,49 @@
             } else if (document.getElementById("radioPendientes").checked) {
                 tipoRegistro = VALOR_PENDIENTES;
             }
-                listarInvoices()
+            nroInvoice = "";
+            document.getElementById("buscadorInvoices").value = "";
+            listarInvoices()
         }
 
         function guardarNroInvoice() {
-            nroInvoice = document.getElementById("buscadorInvoces").value;
+            nroInvoice = document.getElementById("buscadorInvoices").value;
             if (nroInvoice.length == 0) {
                 nroInvoice = "";
             }
         }
 
-        document.getElementById("radioEnviados").addEventListener("change", mostrarRegistros);
-        document.getElementById("radioPendientes").addEventListener("change", mostrarRegistros);
-        document.getElementById("buscadorInvoces").addEventListener("input", guardarNroInvoice);
-
-        $("#actualizar-btn").click(function () {
-            if (tipoRequest === undefined) {
-                alert("Por favor, seleccione que tipo de registro desea refrescar.");
+        function actualizarRegistros() {
+            if (tipoRegistro === undefined) {
+                alert("Por favor, seleccione que tipo de Invoice desea actualizar.");
                 return;
             }
-        });
+            const url = `@Url.Action("UpdateInvoices", "App")`;
+            fetch(url);
+            listarInvoices()
+            alert("Las Commercial Invoices fueron Actualizadas");
+        }
+
+        function buscarRegistros() {
+            if (tipoRegistro === undefined) {
+                alert("Por favor, seleccione que tipo de Invoice desea buscar.");
+                return;
+            }
+            if (isNaN(nroInvoice) && nroInvoice != "") {
+                alert("Por favor ingrese solo el valor numerico del Invoice a buscar.");
+                return;
+            }
+            if (document.getElementById("radioEnviados").checked) {
+                tipoRegistro = VALOR_ENVIADOS;
+            } else if (document.getElementById("radioPendientes").checked) {
+                tipoRegistro = VALOR_PENDIENTES;
+            }
+            listarInvoices()
+        }
 
         function listarInvoices() {
 
             const url = `@Url.Action("GetInvoices", "App")?tipoRegistro=${encodeURIComponent(tipoRegistro)}&nroInvoice=${encodeURIComponent(nroInvoice)}`;
-            console.log(url);
 
             fetch(url)
 
@@ -183,5 +217,12 @@
                     alert("Error al obtener los resultados: " + error);
                 });
         }
+
+        document.getElementById("buscadorInvoices").addEventListener("input", guardarNroInvoice);
+        document.getElementById("radioEnviados").addEventListener("change", mostrarRegistros);
+        document.getElementById("radioPendientes").addEventListener("change", mostrarRegistros);
+        document.getElementById("actualizar").addEventListener("click", actualizarRegistros);
+        document.getElementById("buscar").addEventListener("click", buscarRegistros);
+
     </script>
 }

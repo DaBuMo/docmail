@@ -54,10 +54,9 @@ namespace DOCMAIL.Controllers
         /// Se encarga de llamar al procesamiento y actualiza las invoices seleccionadas segun el tipoRegistro
         /// </summary>
         /// <returns></returns>
-        public void UpdateInvoices(string tipoRegistro)
+        public void UpdateInvoices()
         {
             processingService.Procesar();
-            GetInvoices(tipoRegistro,"");
         }
     }
 }
