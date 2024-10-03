@@ -1,0 +1,12 @@
+.fondo_nav {
+    background-color:#161616;
+
+}
+.custom-radio .form-check-input:checked {
+    background-color: rgb(228, 178, 13);
+    border-color: rgb(228, 178, 13);
+}
+
+.spiner_ocultar{
+    visibility: hidden;
+}
