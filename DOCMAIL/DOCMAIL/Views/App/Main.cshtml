@@ -39,7 +39,7 @@
             <button id="buscar" class="btn bg-dark text-warning">Buscar Invoice</button>
         </div>
         <div class="col-auto mt-1 mb-1">
-            <button id="descargar" class="btn btn-success ">Descargar</button>
+            <button id="botonDescargar" class="btn btn-success ">Descargar</button>
         </div>
     </div>
 
@@ -67,7 +67,7 @@
         </table>
     </div>
 </div>
-</div>
+
 
 
 @section scripts {
@@ -123,6 +123,11 @@
                 tipoRegistro = VALOR_PENDIENTES;
             }
             listarInvoices()
+        }
+
+        function descargar() {
+            const url = `@Url.Action("DescargarInvoice", "App")`;
+            fetch(url);
         }
 
         function listarInvoices() {
@@ -229,6 +234,6 @@
                 buscarRegistros();
             }
         });
-
+        document.getElementById("botonDescargar").addEventListener("click", descargar);
     </script>
 }

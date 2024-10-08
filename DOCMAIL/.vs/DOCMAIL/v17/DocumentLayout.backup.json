@@ -3,24 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\docmail\\views\\login\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\views\\login\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|c:\\users\\st2burgoda\\desktop\\real docmail\\docmail\\docmail\\docmail\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|c:\\users\\st2burgoda\\desktop\\real docmail\\docmail\\docmail\\docmail\\services\\business\\invoiceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\services\\business\\invoiceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\docmail\\views\\app\\main.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\views\\app\\main.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\docmail\\views\\shared\\layout_app.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\views\\shared\\layout_app.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\docmail\\controllers\\appcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{959D84A3-5A7C-411C-9110-FD7CC1AEE18A}|DOCMAIL\\DOCMAIL.csproj|solutionrelative:docmail\\controllers\\appcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,68 +18,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Layout_app.cshtml",
-              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
-              "RelativeDocumentMoniker": "DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
-              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
-              "RelativeToolTip": "DOCMAIL\\Views\\Shared\\Layout_app.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-10-03T18:34:37.259Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Main.cshtml",
-              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\App\\Main.cshtml",
-              "RelativeDocumentMoniker": "DOCMAIL\\Views\\App\\Main.cshtml",
-              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\App\\Main.cshtml",
-              "RelativeToolTip": "DOCMAIL\\Views\\App\\Main.cshtml",
-              "ViewState": "AgIAAFUAAAAAAAAAAAAAAHwAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-10-03T15:11:04.745Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AppController.cs",
-              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Controllers\\AppController.cs",
-              "RelativeDocumentMoniker": "DOCMAIL\\Controllers\\AppController.cs",
-              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Controllers\\AppController.cs",
-              "RelativeToolTip": "DOCMAIL\\Controllers\\AppController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAA7AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-03T18:10:05.318Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\Login\\Login.cshtml",
-              "RelativeDocumentMoniker": "DOCMAIL\\Views\\Login\\Login.cshtml",
-              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\Login\\Login.cshtml",
-              "RelativeToolTip": "DOCMAIL\\Views\\Login\\Login.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC0AAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-10-03T17:56:03.849Z",
+              "Title": "InvoiceService.cs",
+              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Services\\Business\\InvoiceService.cs",
+              "RelativeDocumentMoniker": "DOCMAIL\\Services\\Business\\InvoiceService.cs",
+              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Services\\Business\\InvoiceService.cs",
+              "RelativeToolTip": "DOCMAIL\\Services\\Business\\InvoiceService.cs",
+              "ViewState": "AgIAAJ0AAAAAAAAAAAAgwLYAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-08T12:23:57.492Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "LoginController.cs",
-              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Controllers\\LoginController.cs",
-              "RelativeDocumentMoniker": "DOCMAIL\\Controllers\\LoginController.cs",
-              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Controllers\\LoginController.cs",
-              "RelativeToolTip": "DOCMAIL\\Controllers\\LoginController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-03T17:55:05.606Z",
+              "Title": "Main.cshtml",
+              "DocumentMoniker": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\App\\Main.cshtml",
+              "RelativeDocumentMoniker": "DOCMAIL\\Views\\App\\Main.cshtml",
+              "ToolTip": "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Views\\App\\Main.cshtml",
+              "RelativeToolTip": "DOCMAIL\\Views\\App\\Main.cshtml",
+              "ViewState": "AgIAACcAAAAAAAAAAAAkwCcAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-10-03T15:11:04.745Z",
               "EditorCaption": ""
             }
           ]

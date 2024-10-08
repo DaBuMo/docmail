@@ -9,6 +9,7 @@ namespace DOCMAIL.Controllers
     public class AppController : Controller
     {
         private readonly ProcessingService processingService = new ProcessingService();
+        private readonly InvoiceService invoiceService = new InvoiceService();
 
         public ActionResult Main()
         {
@@ -59,6 +60,11 @@ namespace DOCMAIL.Controllers
         public void UpdateInvoices()
         {
             processingService.Procesar();
+        }
+
+        public void DescargarInvoice()
+        {
+            invoiceService.RetornarInvoice();
         }
     }
 }
