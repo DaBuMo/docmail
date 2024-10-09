@@ -24,7 +24,7 @@ namespace DOCMAIL.Services.Business
             style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Center);
             style = document.Styles.AddStyle("Table", "Normal");
             style.Font.Name = "Verdana";
-            style.Font.Size = 9;
+            style.Font.Size = 7;
             style = document.Styles.AddStyle("Reference", "Normal");
             style.ParagraphFormat.SpaceBefore = "5mm";
             style.ParagraphFormat.SpaceAfter = "5mm";
@@ -78,7 +78,7 @@ namespace DOCMAIL.Services.Business
             destinatarios.AddText("CICANOMC");
             // 2/3 seccion
             destinatarios = section.AddParagraph();
-            destinatarios.Format.SpaceBefore = "1cm";
+            destinatarios.Format.SpaceBefore = "0.5cm";
             destinatarios.Style = "Reference";
             destinatarios.AddText("CICADIRD");
             destinatarios.AddTab();
@@ -96,94 +96,166 @@ namespace DOCMAIL.Services.Business
 
             // Detalle 
             Table table = section.AddTable();
-            table.Format.SpaceBefore = "1cm";
             table.Style = "Table";
             table.Borders.Color = Color.FromRgb(128, 128, 128);
-            table.Borders.Width = 0.1;
-            table.Borders.Left.Width = 0.1;
-            table.Borders.Right.Width = 0.1;
+            table.Borders.Width = 0.75;
             table.Rows.LeftIndent = 0;
-            table.SetEdge(0, 0, 6, 2, Edge.Box, BorderStyle.Single, 0.75, Color.Empty);
+            table.Rows.Alignment = RowAlignment.Right;
 
-            Column column = table.AddColumn("2.5cm");
+            Column column = table.AddColumn("2cm");
             column.Format.Alignment = ParagraphAlignment.Center;
+
+            column = table.AddColumn("2cm");
+            column.Format.Alignment = ParagraphAlignment.Right;
+
+            column = table.AddColumn("3.5cm");
+            column.Format.Alignment = ParagraphAlignment.Right;
+
+            column = table.AddColumn("0.2cm");
+            column.Format.Alignment = ParagraphAlignment.Right;
+
+            column = table.AddColumn("2.5cm");
+            column.Format.Alignment = ParagraphAlignment.Center;
+
+            column = table.AddColumn("2.8cm");
+            column.Format.Alignment = ParagraphAlignment.Right;
+
+            column = table.AddColumn("2cm");
+            column.Format.Alignment = ParagraphAlignment.Right;
 
             column = table.AddColumn("2.5cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("4cm");
-            column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("1cm");
-            column.Format.Alignment = ParagraphAlignment.Right;
+            agregarEncabezados(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
+            agregarRegistro(table);
 
-            column = table.AddColumn("2cm");
-            column.Format.Alignment = ParagraphAlignment.Center;
 
-            column = table.AddColumn("2cm");
-            column.Format.Alignment = ParagraphAlignment.Right;
+            table.SetEdge(0, 0, 6, 2, Edge.Box, BorderStyle.Single, 0.75, Color.Empty);
 
-            column = table.AddColumn("2cm");
-            column.Format.Alignment = ParagraphAlignment.Right;
+            section.AddParagraph();
 
-            column = table.AddColumn("2cm");
-            column.Format.Alignment = ParagraphAlignment.Right;
+            table = section.AddTable();
+            table.Style = "Table";
+            table.Borders.Color = Color.FromRgb(128, 128, 128);
+            table.Borders.Width = 0.75;
+            table.Rows.LeftIndent = 0;
+            table.Rows.Alignment = RowAlignment.Right;
 
-            Row row = table.AddRow();
-            row.HeadingFormat = true;
-            row.Format.Alignment = ParagraphAlignment.Center;
-            row.Format.Font.Bold = true;
-            //row.Shading.Color = Color.FromRgb(0, 0, 255);
-            row.Cells[0].AddParagraph("Quantity");
-            row.Cells[0].Format.Font.Bold = false;
-            row.Cells[0].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[0].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[1].AddParagraph("Code");
-            row.Cells[1].Format.Font.Bold = false;
-            row.Cells[1].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[1].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[2].AddParagraph("Description");
-            row.Cells[2].Format.Font.Bold = false;
-            row.Cells[2].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[2].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[3].AddParagraph("");
-            row.Cells[3].Format.Font.Bold = false;
-            row.Cells[3].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[3].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[4].AddParagraph("Un Weight KG");
-            row.Cells[4].Format.Font.Bold = false;
-            row.Cells[4].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[4].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[5].AddParagraph("Tot Weight KG");
-            row.Cells[5].Format.Font.Bold = false;
-            row.Cells[5].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[5].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[6].AddParagraph("Unit Price");
-            row.Cells[6].Format.Font.Bold = false;
-            row.Cells[6].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[6].VerticalAlignment = VerticalAlignment.Bottom;
-            row.Cells[7].AddParagraph("Amount U$S");
-            row.Cells[7].Format.Font.Bold = false;
-            row.Cells[7].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[7].VerticalAlignment = VerticalAlignment.Bottom;
+            // Definir columnas
+            Column column1 = table.AddColumn(Unit.FromCentimeter(11)); // Primera columna
+            Column column2 = table.AddColumn(Unit.FromCentimeter(2.5));  // Segunda columna (CIDEPRTO)
+            column1.Format.Alignment = ParagraphAlignment.Left;
+            column2.Format.Alignment = ParagraphAlignment.Right; // Alinear contenido a la izquierda
 
-            row = table.AddRow();
-            row.HeadingFormat = true;
-            row.Format.Alignment = ParagraphAlignment.Center;
-            row.Format.Font.Bold = true;
-            row.Shading.Color = Color.FromRgb(0, 0, 155);
-            row.Cells[1].AddParagraph("Quantity");
-            row.Cells[1].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[2].AddParagraph("Unit Price");
-            row.Cells[2].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[3].AddParagraph("Discount (%)");
-            row.Cells[3].Format.Alignment = ParagraphAlignment.Left;
-            row.Cells[4].AddParagraph("Taxable");
-            row.Cells[4].Format.Alignment = ParagraphAlignment.Left;
+            // Agregar filas con contenido
+            string[] items = { "Subtotal", "Flete Internacional", "Seguro", "Importe Final" };
+            foreach (string item in items)
+            {
+                Row row = table.AddRow();
+                row.Height = Unit.FromCentimeter(0.2);
+                row.HeadingFormat = true;
+
+                // Agregar contenido a la celda
+                row.Cells[0].AddParagraph(item);
+                row.Cells[0].Borders.Width = 0.5; // Ancho del borde de la celda
+                row.Cells[0].Borders.Color = Colors.Black; // Color del borde
+
+                // Agregar "CIDEPRTO" a la segunda columna
+                row.Cells[1].AddParagraph("CIDEPRTO");
+                row.Cells[1].Borders.Width = 0.5;
+                row.Cells[1].Borders.Color = Colors.Black;
+            }
+            // Alinear la tabla a la derecha
+            table.Format.Alignment = ParagraphAlignment.Right;
+
+            Paragraph paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("PACKING :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddFormattedText("Net Weight (Kg): ", TextFormat.Bold);
+            paragraph.AddText("CIPINETW");
+            paragraph.AddFormattedText(" · ", TextFormat.Bold);
+            paragraph.AddFormattedText("Gross Weight (Kg): ", TextFormat.Bold);
+            paragraph.AddText("CIPIGROW");
+            paragraph.AddLineBreak();
+            paragraph.AddTab();
+            paragraph.AddTab();
+            paragraph.AddFormattedText("Measurement (M3): ", TextFormat.Bold);
+            paragraph.AddText("CIPIMEAS");
+            paragraph.AddFormattedText(" · ", TextFormat.Bold);
+            paragraph.AddFormattedText("Container: ", TextFormat.Bold);
+            paragraph.AddText("CIPICONT");
+
+            paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("VESSEL :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddTab();
+
+            paragraph.AddText("CIPIVESS");
+            paragraph.AddLineBreak();
+            paragraph.AddFormattedText("MARITIME :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddTab();
+
+            paragraph.AddText("CIPIMARI");
+
+            paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("OBSERVATION :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddText("CIPIOBS1");
+
+            paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("Payment Terms :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddText("CIPIPAYM");
+            paragraph.AddLineBreak();
+            paragraph.AddFormattedText("Conditions :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddTab();
+
+            paragraph.AddText("CIPICOND");
+
+            paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("NOTIFY (1) :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddText("CIPINO11");
+
+            paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("NOTIFY (2) :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddText("CIPINO12");
+
+            paragraph = section.AddParagraph();
+            paragraph.Format.SpaceBefore = "0.5cm";
+            paragraph.AddFormattedText("DOCUMENT :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddText("CIPIDOC1");
+
+
+
             // Footer
             Paragraph footer = section.Footers.Primary.AddParagraph();
             footer.AddText("PIRELLI NEUMATICOS S.A.I.C.· Cervantes 1901 ·1722 - Merlo · Argentina\n");
-            footer.AddText("Invoice Nro: Test");
+            footer.AddText("Invoice Nro: CICANCIN");
             footer.Format.Font.Size = 9;
             footer.Format.Alignment = ParagraphAlignment.Center;
 
@@ -203,6 +275,52 @@ namespace DOCMAIL.Services.Business
             // Abrir el archivo PDF
             Process.Start(new ProcessStartInfo(filename) { UseShellExecute = true });
         }
+        private void agregarEncabezados(Table table)
+        {
+            Row row = table.AddRow();
+            row.HeadingFormat = true;
+            row.Format.Font.Bold = true;
+            row.Height = Unit.FromCentimeter(0.2);
+            row.Format.Alignment = ParagraphAlignment.Center;
+            //row.Shading.Color = Color.FromRgb(0, 0, 255);
+            string[] items = { "Quantity", "Code", "Description", "", "Un Weight KG", "Tot Weight KG", "Unit Price", "Amount U$S" };
+            int i = 0;
+            foreach(string item in items)
+            {
+                row.Cells[i].AddParagraph(item);
+                row.Cells[i].Format.Alignment = ParagraphAlignment.Left;
+                row.Cells[i].VerticalAlignment = VerticalAlignment.Bottom;
+                i++;
+            }
+        }
+        private void agregarRegistro(Table table)
+        {
+            
+            Row row = table.AddRow();
+            string[] items = { "CIDECANT", "CIDEMATE", "CIDEDESC", "CIDEPEUN", "CIDEPETO", "CIDEPRUN", "CIDEPRTO" };
+            row.Height = Unit.FromCentimeter(0.2);
+            row.HeadingFormat = true;
+            row.Format.Alignment = ParagraphAlignment.Center;
+            int i = 0;
+            foreach (string item in items)
+            {
+                if (i == 3)
+                {
+                    i++;
+                }
+                row.Cells[i].AddParagraph(item);
+                if (item == "CIDEPRTO")
+                {
+                    row.Cells[i].Format.Alignment = ParagraphAlignment.Right;
+                }
+                else
+                {
+                    row.Cells[i].Format.Alignment = ParagraphAlignment.Left;
 
+                }
+                i++;
+
+            }
+        }
     }
 }
