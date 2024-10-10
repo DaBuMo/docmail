@@ -5,35 +5,95 @@ using MigraDoc.Rendering;
 using MigraDoc.DocumentObjectModel.Shapes;
 using System.IO;
 using System;
+using DOCMAIL.Services.Data;
+using DOCMAIL.Models;
+using System.Collections.Generic;
+using System.Data.Common;
+using PdfSharp.Pdf;
 
 namespace DOCMAIL.Services.Business
 {
     public class InvoiceService
     {
-        private string rutaLogo = "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Content\\Styles\\logo_invoices.png";
+        private InvoiceDAO invoiceDAO = new InvoiceDAO();
+        private CabeceraModel cabecera;
+        private List<RegistroModel> registros;
+        private SubtotalModel subtotal;
+        private PieModel pie;
 
-        public void RetornarInvoice(string CICAFECH = "dd.MM.yyyy", string CICANCIN = "CICANCIN")
+        private string rutaLogo = "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Content\\Styles\\logo_invoices.png";
+        public PdfDocument RetornarInvoice(string nroInvoice = "9730014445")
         {
             Document document = new Document();
-            Style style = document.Styles["Normal"];
+            aplicarStyle(document);
+            Section section = document.AddSection();
 
+            cabecera = invoiceDAO.ConseguirCabecera(nroInvoice);
+            registros = invoiceDAO.ConseguirRegistros(nroInvoice);
+            subtotal = invoiceDAO.ConseguirSubtotal(nroInvoice);
+            pie = invoiceDAO.ConseguirPie(nroInvoice);
+
+            // Header
+            añadirLogo(section);
+            añadirCuerpoLogo(section);
+            añadirNroInvoice(section);
+            añadirCuerpoCabecera(section);
+
+            // Body
+            añadirTablaDetalle(section);
+            agregarSubtotal(section);
+            
+            // Footer
+            agregarPie(section);
+
+            // Renderizamos el documento
+            var pdfRenderer = new PdfDocumentRenderer();
+            pdfRenderer.Document = document;
+            pdfRenderer.RenderDocument();
+
+            return pdfRenderer.PdfDocument;
+
+            // Guardardamos
+            //string filename = $"C:\\Users\\st2burgoda\\Desktop\\{nroInvoice}.pdf";
+            //if (File.Exists(filename))
+            //{
+                //File.Delete(filename);
+            //}
+            //pdfRenderer.PdfDocument.Save(filename);
+
+            // Abrir el archivo PDF
+            //Process.Start(new ProcessStartInfo(filename) { UseShellExecute = true });
+        }
+        
+        /// <summary>
+        /// Predefine los Styles que tendra nuestro documento
+        /// </summary>
+        /// <param name="document">Documento al cual aplicaremos los Styles definidos</param>
+        private void aplicarStyle(Document document)
+        {
+            // Style el resto del documento
+            Style style = document.Styles["Normal"];
             style.Font.Name = "Verdana";
             style = document.Styles[StyleNames.Header];
             style.ParagraphFormat.AddTabStop("1cm", TabAlignment.Right);
             style = document.Styles[StyleNames.Footer];
             style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Center);
+
+            // Style para la tabla
             style = document.Styles.AddStyle("Table", "Normal");
             style.Font.Name = "Verdana";
-            style.Font.Size = 7;
+            style.Font.Size = 8;
+            
+            // Style para hacer tabs hasta el final de la hoja
             style = document.Styles.AddStyle("Reference", "Normal");
             style.ParagraphFormat.SpaceBefore = "5mm";
             style.ParagraphFormat.SpaceAfter = "5mm";
+            //style.Font.Size = 8;
             style.ParagraphFormat.TabStops.AddTabStop("16cm", TabAlignment.Right);
+        }
 
-            Section section = document.AddSection();
-
-            // Añadir la imagen del logo a la izquierda image.Left = "-1.5cm"; // Ajustar a un valor negativo para moverlo más a la izquierda
-            // Logo
+        private void añadirLogo(Section section)
+        {
             Image logo = section.Headers.Primary.AddImage(rutaLogo);
             logo.Height = "1cm";
             logo.LockAspectRatio = true;
@@ -43,58 +103,66 @@ namespace DOCMAIL.Services.Business
             logo.Left = ShapePosition.Left;
             logo.WrapFormat.Style = WrapStyle.Through;
 
-            // Encabezado
-            Paragraph cuerpo_logo = section.AddParagraph();
-            cuerpo_logo.Style = "Reference";
-            cuerpo_logo.AddFormattedText("NEUMATICOS S.A.I.C.", TextFormat.Bold);
-            cuerpo_logo.AddTab();
-            cuerpo_logo.AddFormattedText("Date: ", TextFormat.Bold);
-            cuerpo_logo.AddDateField(CICAFECH);
-            cuerpo_logo.AddLineBreak();
-            cuerpo_logo.AddFormattedText("Cervantes 1901", TextFormat.Bold);
-            cuerpo_logo.AddLineBreak();
-            cuerpo_logo.AddFormattedText("1722  - Merlo - Argentina", TextFormat.Bold);
-            cuerpo_logo.AddLineBreak();
-            cuerpo_logo.AddFormattedText("Tel : 4489-6660", TextFormat.Bold);
+        }
 
-            // Nro invoice
+        private void añadirCuerpoLogo(Section section)
+        {
+            var cuerpo_logo = agregarParrafo(section, "NEUMATICOS S.A.I.C.", "", 0, "Reference");
+            agregarExtralinea(cuerpo_logo, "Date: ", cabecera.CICAFECH, 1, true);
+            agregarExtralinea(cuerpo_logo, "Cervantes 1901", "", 0, false);
+            agregarExtralinea(cuerpo_logo, "1722  - Merlo - Argentina", "", 0, false);
+            agregarExtralinea(cuerpo_logo, "Tel : 4489-6660 ","", 0, false);
+        }
+
+        private void añadirNroInvoice(Section section)
+        {
             Paragraph nro = section.AddParagraph();
-            nro.Format.SpaceBefore = "1cm";
+
+            nro.Format.SpaceBefore = "0.5cm";
             nro.Style = "Reference";
             nro.AddFormattedText("PROFORMA COMMERCIAL INVOICE N°: ", TextFormat.Bold);
-            nro.AddText(CICANCIN);
+            nro.AddText(cabecera.CICANCIN);
             nro.Format.Alignment = ParagraphAlignment.Center;
-            
-            // 1/3 seccion
+        }
+
+        private void añadirCuerpoCabecera(Section section)
+        {
             Paragraph destinatarios = section.AddParagraph();
-            destinatarios.Format.SpaceBefore = "1cm";
+
+            destinatarios.Format.SpaceBefore = "0.5cm";
             destinatarios.Style = "Reference";
+
             destinatarios.AddFormattedText("TO", TextFormat.Bold);
             destinatarios.AddTab();
             destinatarios.AddFormattedText("CONSIGNEE", TextFormat.Bold);
             destinatarios.AddLineBreak();
-            destinatarios.AddText("CICANOMD");
+            destinatarios.AddText($"{cabecera.CICANOMD}");
             destinatarios.AddTab();
-            destinatarios.AddText("CICANOMC");
-            // 2/3 seccion
-            destinatarios = section.AddParagraph();
-            destinatarios.Format.SpaceBefore = "0.5cm";
-            destinatarios.Style = "Reference";
-            destinatarios.AddText("CICADIRD");
-            destinatarios.AddTab();
-            destinatarios.AddText("CICADIRC");
-            destinatarios.AddLineBreak();
-            destinatarios.AddText("CICALOCD");
-            destinatarios.AddTab();
-            destinatarios.AddText("CICALOCC");
-            // 3/3 seccion
-            destinatarios = section.AddParagraph();
-            destinatarios.Style = "Reference";
-            destinatarios.AddFormattedText("CICACOPD · CICAPAID", TextFormat.Bold);
-            destinatarios.AddTab();
-            destinatarios.AddFormattedText("CICACOPC · CICAPAIC", TextFormat.Bold);
+            destinatarios.AddText($"{cabecera.CICANOMC}");
 
-            // Detalle 
+            destinatarios = section.AddParagraph();
+            destinatarios.Style = "Reference";
+            destinatarios.Format.SpaceBefore = "0.2cm";
+
+            destinatarios.AddText($"{cabecera.CICADIRD}");
+            destinatarios.AddTab();
+            destinatarios.AddText($"{cabecera.CICADIRC}");
+            destinatarios.AddLineBreak();
+            destinatarios.AddText($"{cabecera.CICALOCD}");
+            destinatarios.AddTab();
+            destinatarios.AddText($"{cabecera.CICALOCC}");
+
+            destinatarios = section.AddParagraph();
+            destinatarios.Style = "Reference";
+
+            destinatarios.AddFormattedText($"{cabecera.CICACOPD} · {cabecera.CICAPAID}", TextFormat.Bold);
+            destinatarios.AddTab();
+            destinatarios.AddFormattedText($"{cabecera.CICACOPC} · {cabecera.CICAPAIC}", TextFormat.Bold);
+
+        }
+
+        private void añadirTablaDetalle(Section section)
+        {
             Table table = section.AddTable();
             table.Style = "Table";
             table.Borders.Color = Color.FromRgb(128, 128, 128);
@@ -102,13 +170,13 @@ namespace DOCMAIL.Services.Business
             table.Rows.LeftIndent = 0;
             table.Rows.Alignment = RowAlignment.Right;
 
-            Column column = table.AddColumn("2cm");
+            Column column = table.AddColumn("1.7cm");
             column.Format.Alignment = ParagraphAlignment.Center;
 
-            column = table.AddColumn("2cm");
+            column = table.AddColumn("1.5cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("3.5cm");
+            column = table.AddColumn("4.8cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
             column = table.AddColumn("0.2cm");
@@ -117,163 +185,21 @@ namespace DOCMAIL.Services.Business
             column = table.AddColumn("2.5cm");
             column.Format.Alignment = ParagraphAlignment.Center;
 
-            column = table.AddColumn("2.8cm");
+            column = table.AddColumn("2.6cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("2cm");
+            column = table.AddColumn("1.9cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("2.5cm");
+            column = table.AddColumn("2.3cm");
             column.Format.Alignment = ParagraphAlignment.Right;
-
+            column.Shading.Color = Color.FromRgb(240, 240, 240);
 
             agregarEncabezados(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-            agregarRegistro(table);
-
-
-            table.SetEdge(0, 0, 6, 2, Edge.Box, BorderStyle.Single, 0.75, Color.Empty);
-
-            section.AddParagraph();
-
-            table = section.AddTable();
-            table.Style = "Table";
-            table.Borders.Color = Color.FromRgb(128, 128, 128);
-            table.Borders.Width = 0.75;
-            table.Rows.LeftIndent = 0;
-            table.Rows.Alignment = RowAlignment.Right;
-
-            // Definir columnas
-            Column column1 = table.AddColumn(Unit.FromCentimeter(11)); // Primera columna
-            Column column2 = table.AddColumn(Unit.FromCentimeter(2.5));  // Segunda columna (CIDEPRTO)
-            column1.Format.Alignment = ParagraphAlignment.Left;
-            column2.Format.Alignment = ParagraphAlignment.Right; // Alinear contenido a la izquierda
-
-            // Agregar filas con contenido
-            string[] items = { "Subtotal", "Flete Internacional", "Seguro", "Importe Final" };
-            foreach (string item in items)
+            foreach (RegistroModel registro in registros)
             {
-                Row row = table.AddRow();
-                row.Height = Unit.FromCentimeter(0.2);
-                row.HeadingFormat = true;
-
-                // Agregar contenido a la celda
-                row.Cells[0].AddParagraph(item);
-                row.Cells[0].Borders.Width = 0.5; // Ancho del borde de la celda
-                row.Cells[0].Borders.Color = Colors.Black; // Color del borde
-
-                // Agregar "CIDEPRTO" a la segunda columna
-                row.Cells[1].AddParagraph("CIDEPRTO");
-                row.Cells[1].Borders.Width = 0.5;
-                row.Cells[1].Borders.Color = Colors.Black;
+                agregarRegistro(table, registro);
             }
-            // Alinear la tabla a la derecha
-            table.Format.Alignment = ParagraphAlignment.Right;
-
-            Paragraph paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("PACKING :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddFormattedText("Net Weight (Kg): ", TextFormat.Bold);
-            paragraph.AddText("CIPINETW");
-            paragraph.AddFormattedText(" · ", TextFormat.Bold);
-            paragraph.AddFormattedText("Gross Weight (Kg): ", TextFormat.Bold);
-            paragraph.AddText("CIPIGROW");
-            paragraph.AddLineBreak();
-            paragraph.AddTab();
-            paragraph.AddTab();
-            paragraph.AddFormattedText("Measurement (M3): ", TextFormat.Bold);
-            paragraph.AddText("CIPIMEAS");
-            paragraph.AddFormattedText(" · ", TextFormat.Bold);
-            paragraph.AddFormattedText("Container: ", TextFormat.Bold);
-            paragraph.AddText("CIPICONT");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("VESSEL :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddTab();
-
-            paragraph.AddText("CIPIVESS");
-            paragraph.AddLineBreak();
-            paragraph.AddFormattedText("MARITIME :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddTab();
-
-            paragraph.AddText("CIPIMARI");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("OBSERVATION :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddText("CIPIOBS1");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("Payment Terms :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddText("CIPIPAYM");
-            paragraph.AddLineBreak();
-            paragraph.AddFormattedText("Conditions :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddTab();
-
-            paragraph.AddText("CIPICOND");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("NOTIFY (1) :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddText("CIPINO11");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("NOTIFY (2) :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddText("CIPINO12");
-
-            paragraph = section.AddParagraph();
-            paragraph.Format.SpaceBefore = "0.5cm";
-            paragraph.AddFormattedText("DOCUMENT :", TextFormat.Bold);
-            paragraph.AddTab();
-            paragraph.AddText("CIPIDOC1");
-
-
-
-            // Footer
-            Paragraph footer = section.Footers.Primary.AddParagraph();
-            footer.AddText("PIRELLI NEUMATICOS S.A.I.C.· Cervantes 1901 ·1722 - Merlo · Argentina\n");
-            footer.AddText("Invoice Nro: CICANCIN");
-            footer.Format.Font.Size = 9;
-            footer.Format.Alignment = ParagraphAlignment.Center;
-
-            // Renderizamos el documento
-            var pdfRenderer = new PdfDocumentRenderer();
-            pdfRenderer.Document = document;
-            pdfRenderer.RenderDocument();
-
-            // Guardardamos
-            string filename = "C:\\Users\\st2burgoda\\Desktop\\TablaEjemploConLogo.pdf";
-            if (File.Exists(filename))
-            {
-                File.Delete(filename);
-            }
-            pdfRenderer.PdfDocument.Save(filename);
-
-            // Abrir el archivo PDF
-            Process.Start(new ProcessStartInfo(filename) { UseShellExecute = true });
         }
         private void agregarEncabezados(Table table)
         {
@@ -282,22 +208,22 @@ namespace DOCMAIL.Services.Business
             row.Format.Font.Bold = true;
             row.Height = Unit.FromCentimeter(0.2);
             row.Format.Alignment = ParagraphAlignment.Center;
-            //row.Shading.Color = Color.FromRgb(0, 0, 255);
+            row.Shading.Color = Color.FromRgb(207, 207, 207);
             string[] items = { "Quantity", "Code", "Description", "", "Un Weight KG", "Tot Weight KG", "Unit Price", "Amount U$S" };
             int i = 0;
             foreach(string item in items)
             {
                 row.Cells[i].AddParagraph(item);
+                row.Cells[i].Borders.Color = Colors.Black;
                 row.Cells[i].Format.Alignment = ParagraphAlignment.Left;
                 row.Cells[i].VerticalAlignment = VerticalAlignment.Bottom;
                 i++;
             }
         }
-        private void agregarRegistro(Table table)
+        private void agregarRegistro(Table table, RegistroModel registro)
         {
-            
             Row row = table.AddRow();
-            string[] items = { "CIDECANT", "CIDEMATE", "CIDEDESC", "CIDEPEUN", "CIDEPETO", "CIDEPRUN", "CIDEPRTO" };
+            string[] items = { registro.CIDECANT, registro.CIDEMATE, registro.CIDEDESC, registro.CIDEPEUN, registro.CIDEPETO, registro.CIDEPRUN, registro.CIDEPRTO };
             row.Height = Unit.FromCentimeter(0.2);
             row.HeadingFormat = true;
             row.Format.Alignment = ParagraphAlignment.Center;
@@ -309,7 +235,7 @@ namespace DOCMAIL.Services.Business
                     i++;
                 }
                 row.Cells[i].AddParagraph(item);
-                if (item == "CIDEPRTO")
+                if (item == registro.CIDEPRTO)
                 {
                     row.Cells[i].Format.Alignment = ParagraphAlignment.Right;
                 }
@@ -320,6 +246,134 @@ namespace DOCMAIL.Services.Business
                 }
                 i++;
 
+            }
+        }
+        private void agregarSubtotal(Section section)
+        {
+            section.AddParagraph();
+
+            Table table = section.AddTable();
+            table.Style = "Table";
+            table.Borders.Color = Color.FromRgb(128, 128, 128);
+            table.Borders.Width = 0.75;
+            table.Rows.LeftIndent = 0;
+            table.Rows.Alignment = RowAlignment.Right;
+
+            Column column1 = table.AddColumn(Unit.FromCentimeter(12)); 
+            Column column2 = table.AddColumn(Unit.FromCentimeter(2.3));
+            column2.Shading.Color = Color.FromRgb(240, 240, 240);
+
+            column1.Format.Alignment = ParagraphAlignment.Left;
+            column2.Format.Alignment = ParagraphAlignment.Right; 
+
+            
+            var propertyNames = new[] { "FCA", "FLETE", "SEGURO", "TOTAL" };
+            foreach (string propertyName in propertyNames)
+            {
+                // Usar reflexión para obtener el valor de la propiedad
+                var propertyValue = subtotal.GetType().GetProperty(propertyName)?.GetValue(subtotal, null)?.ToString();
+
+                if (propertyValue != null)
+                {
+                    Row row = table.AddRow();
+                    row.Height = Unit.FromCentimeter(0.2);
+                    row.HeadingFormat = true;
+
+                    row.Cells[0].AddParagraph(propertyName); 
+                    row.Cells[0].Borders.Width = 0.5; 
+                    row.Cells[0].Borders.Color = Colors.Black; 
+
+                    row.Cells[1].AddParagraph(propertyValue);
+                    row.Cells[1].Borders.Width = 0.5;
+                    row.Cells[1].Borders.Color = Colors.Black;
+                }
+            }
+            table.Format.Alignment = ParagraphAlignment.Right;
+        }
+
+
+        private void agregarPie(Section section)
+        {
+            Paragraph paragraph = section.AddParagraph();
+
+            paragraph.Format.SpaceBefore = "0.25cm";
+            paragraph.AddFormattedText("PACKING :", TextFormat.Bold);
+            paragraph.AddTab();
+            paragraph.AddFormattedText("Net Weight (Kg): ", TextFormat.Bold);
+            paragraph.AddText(pie.CIPINETW);
+            paragraph.AddFormattedText("  ·  ", TextFormat.Bold);
+            paragraph.AddFormattedText("Gross Weight (Kg): ", TextFormat.Bold);
+            paragraph.AddText(pie.CIPIGROW);
+            paragraph.AddLineBreak();
+            paragraph.AddTab();
+            paragraph.AddTab();
+            paragraph.AddFormattedText("Measurement (M3): ", TextFormat.Bold);
+            paragraph.AddText(pie.CIPIMEAS);
+            paragraph.AddFormattedText("  ·  ", TextFormat.Bold);
+            paragraph.AddFormattedText("Container: ", TextFormat.Bold);
+            paragraph.AddText(pie.CIPICONT);
+
+            var parrafoAnt = agregarParrafo(section, "VESSEL :", pie.CIPIVESS,2);
+            agregarExtralinea(parrafoAnt, "MARITIME :", pie.CIPIMARI, 2,false);
+
+            agregarParrafo(section, "OBSERVATION :", pie.CIPIOBS1, 1);
+            agregarParrafo(section, "MARITIME :", pie.CIPIMARI, 2);
+
+            parrafoAnt = agregarParrafo(section, "Payment Terms :",pie.CIPIPAYM, 1);
+            agregarExtralinea(parrafoAnt, "Conditions :", pie.CIPICOND, 2, false);
+
+            agregarParrafo(section, "NOTIFY (1) :", pie.CIPINO11, 1);
+
+            parrafoAnt = agregarParrafo(section, "NOTIFY (2) :", pie.CIPINO12, 1);
+            agregarExtralinea(parrafoAnt, "DOCUMENT :", pie.CIPIDOC1, 3, true);
+
+            Paragraph footer = section.Footers.Primary.AddParagraph();
+            footer.AddText("PIRELLI NEUMATICOS S.A.I.C.· Cervantes 1901 ·1722 - Merlo · Argentina\n");
+            footer.AddText($"Invoice Nro: {pie.CIPINCIN}");
+            footer.Format.Font.Size = 7;
+            footer.Format.Alignment = ParagraphAlignment.Center;
+        }
+
+        private Paragraph agregarParrafo(Section section,string tipo, string contenido,int tabs,string style = "")
+        {
+            Paragraph paragraph = section.AddParagraph();
+            if (style != "")
+            {
+                paragraph.Style = style;
+            }
+            paragraph.Format.SpaceBefore = "0.25cm";
+            paragraph.AddFormattedText(tipo, TextFormat.Bold);
+            agregarTabs(paragraph, tabs);
+            paragraph.AddText(contenido);
+            return paragraph;        
+        }
+
+        private void agregarExtralinea(Paragraph paragraph,string tipo,string contenido,int tabs,bool mismaLinea)
+        {
+            if (!mismaLinea)
+            {
+                paragraph.AddLineBreak();
+            }
+            else
+            {
+                agregarTabs(paragraph, tabs);
+                tabs--;
+            }
+            paragraph.AddFormattedText(tipo, TextFormat.Bold);
+            agregarTabs(paragraph, tabs);
+            paragraph.AddText(contenido);
+        }
+
+        /// <summary>
+        /// Agrega tabulaciones en el parrafo indicado
+        /// </summary>
+        /// <param name="paragraph"> Parrafo en el que queremos tabular </param>
+        /// <param name="tabs"> Cantidad tabulaciones </param>
+        private void agregarTabs(Paragraph paragraph,int tabs)
+        {
+            for (int i = 0; i < tabs; i++)
+            {
+                paragraph.AddTab();
             }
         }
     }

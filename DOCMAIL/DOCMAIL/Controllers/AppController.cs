@@ -1,6 +1,7 @@
 ﻿using DOCMAIL.Services.Business;
 using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -62,9 +63,22 @@ namespace DOCMAIL.Controllers
             processingService.Procesar();
         }
 
-        public void DescargarInvoice()
+        public ActionResult DescargarInvoice()
         {
-            invoiceService.RetornarInvoice();
+            // Generar el documento PDF
+            var document = invoiceService.RetornarInvoice();
+
+            using (var stream = new MemoryStream())
+            {
+                // Guardar el documento en el stream
+                document.Save(stream);
+                stream.Position = 0; // Reiniciar la posición del stream
+
+                // Configurar la respuesta
+                var fileBytes = stream.ToArray();
+                return File(fileBytes, "application/pdf", "invoice.pdf");
+            }
+
         }
     }
 }
