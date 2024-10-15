@@ -117,5 +117,13 @@ namespace DOCMAIL.Services.Data
             return Path.Combine(destino, nuevoNombre);
         }
 
+        internal void CambiarNroEnvios(string nroInvoice)
+        {
+            using (Conexao conn = new Conexao())
+            {
+                conn.Criar_parametro("@NCIN", nroInvoice);
+                conn.Executar_proc("DOCMAIL_CI_UPDATE_ENVIOS", "COMEX");
+            }
+        }
     }
 }

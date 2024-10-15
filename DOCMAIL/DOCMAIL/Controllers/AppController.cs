@@ -63,22 +63,20 @@ namespace DOCMAIL.Controllers
             processingService.Procesar();
         }
 
-        public ActionResult DescargarInvoice()
+        public ActionResult DescargarInvoice(string nroInvoice)
         {
             // Generar el documento PDF
-            var document = invoiceService.RetornarInvoice();
-
+            var document = invoiceService.RetornarInvoice(nroInvoice);
+            processingService.CambiarCategoriaInvoice(nroInvoice);
             using (var stream = new MemoryStream())
             {
                 // Guardar el documento en el stream
-                document.Save(stream);
-                stream.Position = 0; // Reiniciar la posición del stream
+                document.Save(stream); // Asegúrate de que 'document' es de tipo PdfDocument
+                stream.Position = 0; // Restablecer la posición del flujo
 
-                // Configurar la respuesta
-                var fileBytes = stream.ToArray();
-                return File(fileBytes, "application/pdf", "invoice.pdf");
+                // Configurar la respuesta para la descarga
+                return File(stream.ToArray(), "application/pdf", "invoice.pdf");
             }
-
         }
     }
 }

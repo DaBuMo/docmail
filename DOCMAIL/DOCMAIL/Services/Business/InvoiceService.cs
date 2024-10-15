@@ -173,7 +173,7 @@ namespace DOCMAIL.Services.Business
             Column column = table.AddColumn("1.7cm");
             column.Format.Alignment = ParagraphAlignment.Center;
 
-            column = table.AddColumn("1.5cm");
+            column = table.AddColumn("2cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
             column = table.AddColumn("4.8cm");
@@ -376,5 +376,6 @@ namespace DOCMAIL.Services.Business
                 paragraph.AddTab();
             }
         }
+
     }
 }

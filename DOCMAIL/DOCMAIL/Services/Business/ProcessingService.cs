@@ -32,6 +32,11 @@ namespace DOCMAIL.Services.Business
             processingDAO.ProcessComercialInvoices(origen,destino);
         }
 
+        internal void CambiarCategoriaInvoice(string nroInvoice)
+        {
+            processingDAO.CambiarNroEnvios(nroInvoice);
+        }
+
         /// <summary>
         /// Establece la carpeta en la cual se guardaran los Commercial Invoices procesados, esta suele ser la primera carpeta que lea en el directorio en el que se almacenen los Commercial Invoices.
         /// </summary>

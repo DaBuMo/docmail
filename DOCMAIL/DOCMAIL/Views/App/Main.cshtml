@@ -78,18 +78,26 @@
         let nroInvoice = "";
         const VALOR_ENVIADOS = 1 ;
         const VALOR_PENDIENTES = 0;
-
+        /*
+           Se encarga de limpiar la lista de registros seleccionados y listar los registros segun el tipo(radioButton) elegido.
+        */
         function mostrarRegistros() {
             if (document.getElementById("radioEnviados").checked) {
                 tipoRegistro = VALOR_ENVIADOS;
+                selectedIds = [];
             } else if (document.getElementById("radioPendientes").checked) {
                 tipoRegistro = VALOR_PENDIENTES;
+                selectedIds = [];
+
             }
             nroInvoice = "";
             document.getElementById("buscadorInvoices").value = "";
             listarInvoices()
         }
 
+        /*
+          Se encarga de actualizar el valor de Nro de invoice segun lo ingresado en el buscador de invoices
+        */
         function guardarNroInvoice() {
             nroInvoice = document.getElementById("buscadorInvoices").value;
             if (nroInvoice.length == 0) {
@@ -97,6 +105,9 @@
             }
         }
 
+        /*
+          Se encarga de refrescar los registros segun el radioButton seleccionado y los vuelve a listar
+        */
         function actualizarRegistros() {
             if (tipoRegistro === undefined) {
                 alert("Por favor, seleccione que tipo de Invoice desea actualizar.");
@@ -108,6 +119,9 @@
             alert("Las Commercial Invoices fueron Actualizadas");
         }
 
+        /*
+            Se encarga de buscar y mostrar los invoices que tengan un nro parecido o igual al introducido en el buscador de Invoices
+        */
         function buscarRegistros() {
             if (tipoRegistro === undefined) {
                 alert("Por favor, seleccione que tipo de Invoice desea buscar.");
@@ -125,95 +139,122 @@
             listarInvoices()
         }
 
-        function descargar() {
-            const url = `@Url.Action("DescargarInvoice", "App")`;
-            fetch(url);
+        /*
+            Se encarga de llamar a descargar a todos los invoices seleccionados por el usuario, estos se almacenan en selectedIds
+        */
+        function descargarSeleccion() {
+            if (selectedIds.length == 0) {
+                console.log(selectedIds)
+                alert("Por favor, seleccione almenos un registro para descargar");
+                return;
+            }
+            selectedIds.forEach(descargar);
+            selectedIds = [];
+
+        }
+        /*
+            Se encarga de descargar el PDF generado en base a los datos vinculados al Nro de Invoice provisto
+        */
+        function descargar(nroInvoice) {
+            const url = `@Url.Action("DescargarInvoice", "App")?nroInvoice=${encodeURIComponent(nroInvoice)}`;
+            listarInvoices();
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        console.log("Sin respuesta");
+                        throw new Error('Error en la descarga');
+                    }
+                    console.log("Hay respuesta");
+                    return response.blob();
+                })
+                .then(blob => {
+                    const urlBlob = window.URL.createObjectURL(blob); // Creamos un objeto URL para el blob
+                    const a = document.createElement('a'); // Crear un enlace
+                    a.style.display = 'none';
+                    a.href = urlBlob;
+                    a.download = `${nroInvoice}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(urlBlob); // Liberamos el objeto URL
+                    document.body.removeChild(a);
+                })
+                .catch(error => console.error('Error:', error));
         }
 
+        /*
+            Se encarga de listar todas las Invoices vinculadas al tipo de registro seleccionado (RadioButtons) y, si es que buscador no esta vacio, filtra los invoices por aquellas que tengan un numero similar o igual.
+        */
         function listarInvoices() {
-
             const url = `@Url.Action("GetInvoices", "App")?tipoRegistro=${encodeURIComponent(tipoRegistro)}&nroInvoice=${encodeURIComponent(nroInvoice)}`;
 
             fetch(url)
 
                 .then(response => {
-                    if (!response.ok) {
 
+                    if (!response.ok) {
                         throw new Error("Error al conectar a la red");
                     }
                     return response.json();
+
                 })
+
 
                 .then(data => {
 
                     if (data !== null) {
-                        if (data.length == 0) {
-                            alert("No se encontro un registro con dicho numero en la base de datos")
-                        }
-                        else {
+
+                        if (data.length === 0) {
+
+                            alert("No se encontró un registro con dicho número en la base de datos");
+
+                        } else {
 
                             const tabla = document.getElementById('mi-tabla').getElementsByTagName('tbody')[0];
-                            tabla.innerHTML = ''; // Limpiamos el contenido actual de la tabla
-                            let id = 0;
-                            const selectedIds = [];
+                            tabla.innerHTML = ''; // Limpiar el contenido actual de la tabla
+                            data.forEach((item, index) => {
+                                const fechaFormateada = item.FECHAULTENV
 
-                            data.forEach(item => {
+                                    ? new Date(parseInt(item.FECHAULTENV.match(/-?\d+/)[0])).toLocaleDateString("es-ES")
 
-                                // Formateamos fecha
-                                let fechaFormateada;
-                                if (item.FECHAULTENV != null) {
-                                    const timestamp = parseInt(item.FECHAULTENV.match(/-?\d+/)[0]);
-                                    const fechaUltEnv = new Date(timestamp);
-                                    fechaFormateada = fechaUltEnv.toLocaleDateString("es-ES");
-                                } else {
-                                    fechaFormateada = new Date().toLocaleDateString("es-ES");
-                                }
+                                    : new Date().toLocaleDateString("es-ES");
+
 
                                 const fila = document.createElement('tr');
 
+
                                 fila.innerHTML = `
-                            <td>
-                            <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="${item.FACTURA}" id="checkBox${id}">
-                            </div>
-                            </td>
-                            <td>${item.FACTURA}</td>
-                            <td>${item.FECHA}</td>
-                            <td>${item.DESTINATARIO}</td>
-                            <td>${item.DIRECCION}</td>
-                            <td>${item.MAIL}</td>
-                            <td>${item.USUARIO}</td>
-                            <td>${fechaFormateada}</td>
-                            <td>${item.CANT_ENVIOS}</td>
-                            `;
+                                <td>    
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="${item.FACTURA}" id="checkBox${index}">
+                                    </div>
+                                </td>
+                                <td>${item.FACTURA}</td>
+                                <td>${item.FECHA}</td>
+                                <td>${item.DESTINATARIO}</td>
+                                <td>${item.DIRECCION}</td>
+                                <td>${item.MAIL}</td>
+                                <td>${item.USUARIO}</td>
+                                <td>${fechaFormateada}</td>
+                                <td>${item.CANT_ENVIOS}</td>
+                                `;
+
 
                                 tabla.appendChild(fila);
-
-                                const checkbox = fila.querySelector(`#checkBox${id}`);
+                                const checkbox = fila.querySelector(`#checkBox${index}`);
                                 checkbox.addEventListener('change', function () {
+
                                     const checkboxId = this.id; // Obtener el ID del checkbox
-                                    const checkboxValue = this.value;
-
-                                    // Agregar el ID al array si está marcado
                                     if (this.checked) {
-                                        selectedIds.push(checkboxId);
-                                        console.log("Checkbox marcado: " + checkboxId + ", Value: " + checkboxValue);
-                                        // Eliminar el ID del array si está desmarcado
+                                        selectedIds.push(item.FACTURA); // Agregar el valor de FACTURA al array
                                     } else {
-                                        const index = selectedIds.indexOf(checkboxId);
-
+                                        const index = selectedIds.indexOf(item.FACTURA);
                                         if (index > -1) {
-                                            selectedIds.splice(index, 1);
+                                            selectedIds.splice(index, 1); // Eliminar el valor si está desmarcado
                                         }
-                                        console.log("Checkbox desmarcado: " + checkboxId);
                                     }
-                                    console.log("IDs seleccionados: ", selectedIds); // Mostrar el array actualizado
                                 });
-
-                                id++;
                             });
                         }
-
                     } else {
                         alert("No se recibieron datos válidos del servidor.");
                     }
@@ -234,6 +275,6 @@
                 buscarRegistros();
             }
         });
-        document.getElementById("botonDescargar").addEventListener("click", descargar);
+        document.getElementById("botonDescargar").addEventListener("click", descargarSeleccion);
     </script>
 }
