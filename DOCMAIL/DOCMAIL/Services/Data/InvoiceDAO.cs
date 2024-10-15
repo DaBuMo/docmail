@@ -10,6 +10,12 @@ namespace DOCMAIL.Services.Data
 {
     public class InvoiceDAO
     {
+
+        /// <summary>
+        /// Se encarga de conseguir los datos relacionados a la cabecera del Invoice y devolvera un CabeceraModel con dichos datos.
+        /// </summary>
+        /// <param name="nroInvoice">Nro del Commercial Invoice del cual se daran formato los datos</param>
+        /// <returns>CabeceraModel</returns>
         public CabeceraModel ConseguirCabecera(string nroInvoice)
         {
             DataTable result;
@@ -41,6 +47,11 @@ namespace DOCMAIL.Services.Data
             return cabecera;
         }
 
+        /// <summary>
+        /// Se encarga de conseguir los datos relacionados a los registros del Invoice y devolvera una lista de RegistroModel con dichos datos.
+        /// </summary>
+        /// <param name="nroInvoice">Nro del Commercial Invoice del cual se daran formato los datos</param>
+        /// <returns>List<RegistroModel></returns>
         public List<RegistroModel> ConseguirRegistros(string nroInvoice)
         {
             DataTable result;
@@ -64,13 +75,16 @@ namespace DOCMAIL.Services.Data
                 registro.CIDEPETO = row["CIDEPETO"].ToString();
                 registro.CIDEPRUN = row["CIDEPRUN"].ToString();
                 registro.CIDEPRTO = row["CIDEPRTO"].ToString();
-
                 registros.Add(registro);
             }
-
             return registros;
         }
 
+        /// <summary>
+        /// Se encarga de conseguir los datos relacionados al subtotal del Invoice y devolvera un SubtotalModel con dichos datos.
+        /// </summary>
+        /// <param name="nroInvoice">Nro del Commercial Invoice del cual se daran formato los datos</param>
+        /// <returns>SubtotalModel</returns>
         public SubtotalModel ConseguirSubtotal(string nroInvoice)
         {
             DataTable result;
@@ -95,6 +109,11 @@ namespace DOCMAIL.Services.Data
             return subtotal;
         }
 
+        /// <summary>
+        /// Se encarga de conseguir los datos relacionados al pie del Invoice y devolvera un PieModel con dichos datos.
+        /// </summary>
+        /// <param name="nroInvoice">Nro del Commercial Invoice del cual se daran formato los datos</param>
+        /// <returns>PieModel</returns>
         public PieModel ConseguirPie(string nroInvoice)
         {
             DataTable result;

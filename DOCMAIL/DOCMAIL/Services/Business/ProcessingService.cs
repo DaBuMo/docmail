@@ -32,6 +32,11 @@ namespace DOCMAIL.Services.Business
             processingDAO.ProcessComercialInvoices(origen,destino);
         }
 
+        /// <summary>
+        /// Se comunica con el ProcessingDAO para llamar aumentar la cantidad de envios del Invoices relacionado al numero dado.
+        /// </summary>
+        /// <param name="nroInvoice">Nro del invoice Descargado</param>
+        /// <returns></returns>
         internal void CambiarCategoriaInvoice(string nroInvoice)
         {
             processingDAO.CambiarNroEnvios(nroInvoice);

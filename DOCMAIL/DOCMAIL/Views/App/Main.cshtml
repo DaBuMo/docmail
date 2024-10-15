@@ -150,6 +150,7 @@
             }
             selectedIds.forEach(descargar);
             selectedIds = [];
+            listarInvoices();
 
         }
         /*
@@ -157,7 +158,6 @@
         */
         function descargar(nroInvoice) {
             const url = `@Url.Action("DescargarInvoice", "App")?nroInvoice=${encodeURIComponent(nroInvoice)}`;
-            listarInvoices();
             fetch(url)
                 .then(response => {
                     if (!response.ok) {

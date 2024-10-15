@@ -63,18 +63,18 @@ namespace DOCMAIL.Controllers
             processingService.Procesar();
         }
 
+        /// <summary>
+        /// Se encarga de llamar a la construccion, cambio de cantidad de envios y descarga de un Invoice especifico
+        /// </summary>
+        /// <returns></returns>
         public ActionResult DescargarInvoice(string nroInvoice)
         {
-            // Generar el documento PDF
             var document = invoiceService.RetornarInvoice(nroInvoice);
             processingService.CambiarCategoriaInvoice(nroInvoice);
             using (var stream = new MemoryStream())
             {
-                // Guardar el documento en el stream
-                document.Save(stream); // Asegúrate de que 'document' es de tipo PdfDocument
-                stream.Position = 0; // Restablecer la posición del flujo
-
-                // Configurar la respuesta para la descarga
+                document.Save(stream); 
+                stream.Position = 0; 
                 return File(stream.ToArray(), "application/pdf", "invoice.pdf");
             }
         }

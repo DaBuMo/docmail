@@ -22,6 +22,12 @@ namespace DOCMAIL.Services.Business
         private PieModel pie;
 
         private string rutaLogo = "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Content\\Styles\\logo_invoices.png";
+
+        /// <summary>
+        /// Se encarga de construir y modelar un PDF de la Invoice en base a los datos conseguidos en la BD 
+        /// </summary>
+        /// <param name="nroInvoice">Nro de invoce del cual buscaremos los datos y formaremos el diseño del PDF</param>
+        /// <returns>PdfDocument</returns>
         public PdfDocument RetornarInvoice(string nroInvoice = "9730014445")
         {
             Document document = new Document();
@@ -52,17 +58,6 @@ namespace DOCMAIL.Services.Business
             pdfRenderer.RenderDocument();
 
             return pdfRenderer.PdfDocument;
-
-            // Guardardamos
-            //string filename = $"C:\\Users\\st2burgoda\\Desktop\\{nroInvoice}.pdf";
-            //if (File.Exists(filename))
-            //{
-                //File.Delete(filename);
-            //}
-            //pdfRenderer.PdfDocument.Save(filename);
-
-            // Abrir el archivo PDF
-            //Process.Start(new ProcessStartInfo(filename) { UseShellExecute = true });
         }
         
         /// <summary>
@@ -92,6 +87,10 @@ namespace DOCMAIL.Services.Business
             style.ParagraphFormat.TabStops.AddTabStop("16cm", TabAlignment.Right);
         }
 
+        /// <summary>
+        /// Añade un logo en la parte superior de la pantalla
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos nuestro logo</param>
         private void añadirLogo(Section section)
         {
             Image logo = section.Headers.Primary.AddImage(rutaLogo);
@@ -104,7 +103,10 @@ namespace DOCMAIL.Services.Business
             logo.WrapFormat.Style = WrapStyle.Through;
 
         }
-
+        /// <summary>
+        /// El cuerpo del logo en la parte superior de la pantalla
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos el cuerpo de nuestro logo</param>
         private void añadirCuerpoLogo(Section section)
         {
             var cuerpo_logo = agregarParrafo(section, "NEUMATICOS S.A.I.C.", "", 0, "Reference");
@@ -114,6 +116,10 @@ namespace DOCMAIL.Services.Business
             agregarExtralinea(cuerpo_logo, "Tel : 4489-6660 ","", 0, false);
         }
 
+        /// <summary>
+        /// Añade el Nro del Invoice en la parte superior de la pantalla
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos nuestro Nro de Invoice</param>
         private void añadirNroInvoice(Section section)
         {
             Paragraph nro = section.AddParagraph();
@@ -125,6 +131,10 @@ namespace DOCMAIL.Services.Business
             nro.Format.Alignment = ParagraphAlignment.Center;
         }
 
+        /// <summary>
+        /// Añade los detalles de cabecera
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos nuestra cabecera</param>
         private void añadirCuerpoCabecera(Section section)
         {
             Paragraph destinatarios = section.AddParagraph();
@@ -161,6 +171,10 @@ namespace DOCMAIL.Services.Business
 
         }
 
+        /// <summary>
+        /// Crea la tabla en la cual ingresaremos los registros
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos nuestra tabla</param>
         private void añadirTablaDetalle(Section section)
         {
             Table table = section.AddTable();
@@ -201,6 +215,11 @@ namespace DOCMAIL.Services.Business
                 agregarRegistro(table, registro);
             }
         }
+
+        /// <summary>
+        /// Agrega los encabezados de los registros
+        /// </summary>
+        /// <param name="table">Tabla en la cual aplicaremos los encabezados</param>
         private void agregarEncabezados(Table table)
         {
             Row row = table.AddRow();
@@ -220,6 +239,12 @@ namespace DOCMAIL.Services.Business
                 i++;
             }
         }
+
+        /// <summary>
+        /// Agrega un registro a la tabla respetando el formato dado a esta
+        /// </summary>
+        /// <param name="table">Tabla en la cual aplicaremos los registros</param>
+        /// <param name="registro">Registro modelado a partir de RegistroModel</param>
         private void agregarRegistro(Table table, RegistroModel registro)
         {
             Row row = table.AddRow();
@@ -248,6 +273,11 @@ namespace DOCMAIL.Services.Business
 
             }
         }
+
+        /// <summary>
+        /// Agrega la seccion de subtotal
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos la seccion de subtotal</param>
         private void agregarSubtotal(Section section)
         {
             section.AddParagraph();
@@ -291,7 +321,10 @@ namespace DOCMAIL.Services.Business
             table.Format.Alignment = ParagraphAlignment.Right;
         }
 
-
+        /// <summary>
+        ///  Agrega la seccion de pie
+        /// </summary>
+        /// <param name="section">Seccion en la cual aplicaremos nuestro footer</param>
         private void agregarPie(Section section)
         {
             Paragraph paragraph = section.AddParagraph();
@@ -334,6 +367,14 @@ namespace DOCMAIL.Services.Business
             footer.Format.Alignment = ParagraphAlignment.Center;
         }
 
+        /// <summary>
+        /// Agrega un parrafo en la seccion indicada
+        /// </summary>
+        /// <param name="section"> Seccion donde se agregara los parrafos </param>
+        /// <param name="tipo"> Definicion del contenido </param>
+        /// <param name="contenido"> </param>
+        /// <param name="tabs"> Cantidad tabulaciones </param>
+        /// <param name="style"> Style que se le aplicara al parrafo </param>
         private Paragraph agregarParrafo(Section section,string tipo, string contenido,int tabs,string style = "")
         {
             Paragraph paragraph = section.AddParagraph();
@@ -348,6 +389,14 @@ namespace DOCMAIL.Services.Business
             return paragraph;        
         }
 
+        /// <summary>
+        /// Agrega una linea extra en un parrafo dado
+        /// </summary>
+        /// <param name="paragraph"> Parrafo donde se agregara la linea extra </param>
+        /// <param name="tipo"> Definicion del contenido </param>
+        /// <param name="contenido"> </param>
+        /// <param name="tabs"> Cantidad tabulaciones </param>
+        /// <param name="mismaLinea"> Indica si se agrega o no un salto de linea antes de agregar la nueva linea </param>
         private void agregarExtralinea(Paragraph paragraph,string tipo,string contenido,int tabs,bool mismaLinea)
         {
             if (!mismaLinea)

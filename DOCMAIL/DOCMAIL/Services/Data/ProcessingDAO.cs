@@ -117,6 +117,11 @@ namespace DOCMAIL.Services.Data
             return Path.Combine(destino, nuevoNombre);
         }
 
+        /// <summary>
+        /// Esta funcion se encarga aumentar la cantidad de envios de un Invoice espeficio" 
+        /// </summary>
+        /// <param name="nroInvoice">Nro del Invoice descargado</param>
+        /// <returns></returns>
         internal void CambiarNroEnvios(string nroInvoice)
         {
             using (Conexao conn = new Conexao())
