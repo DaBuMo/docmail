@@ -1,35 +1,37 @@
 ﻿@{
     ViewBag.Title = "Main";
     Layout = "~/Views/Shared/Layout_app.cshtml";
+    ViewBag.Title = "DOCMAIL";
 }
 <div class="container-fluid">
     <div class="row">
         <div class="col text-center mt-2 mb-2">
-            <button id="actualizar" class="btn btn-warning";">Actualizar Commercial Invoices</button>
+            <button id="actualizar" class="btn btn-warning" ;">Actualizar Commercial Invoices</button>
         </div>
     </div>
 
     <div class="row border mb-3 alert alert-warning">
-        <div class="col-4 d-flex justify-content-center align-items-center" style="height: 50px; padding: 0;" >
-            <h1 class="display-5 mb-0" style="font-size: 1.5rem; text-align: center; width: 100%;">Estado del Invoice:</h1>
+        <div class="col-12 d-flex justify-content-center align-items-center" style="height: 45px; padding: 0;">
+            <h1 class="display-5" style="font-size: 1.5rem; text-align: center; font-weight: bold;">
+                Estado del Invoice:
+            </h1>
         </div>
-        <div class="col-4 d-flex justify-content-center align-items-center" style="height: 50px;">
-            <div class="form-check text-center">
+        <div class="col-12 d-flex justify-content-center align-items-center" style="height: 45px;">
+            <div class="form-check text-center mx-2">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="radioEnviados">
-                <label class="form-check-label" for="radioEnviados">
+                <label class="form-check-label" for="radioEnviados" style="font-size: 1.3rem; font-family: 'Montserrat', sans-serif;">
                     Enviados
                 </label>
             </div>
-        </div>
-        <div class="col-4 d-flex justify-content-center align-items-center" style="height: 50px;">
-            <div class="form-check text-center">
+            <div class="form-check text-center mx-2">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="radioPendientes">
-                <label class="form-check-label" for="radioPendientes">
+                <label class="form-check-label" for="radioPendientes" style="font-size: 1.3rem; font-family: 'Montserrat', sans-serif;">
                     Pendientes
                 </label>
             </div>
         </div>
     </div>
+
 
     <div class="row">
         <div class="col-auto mb-1 mt-1">
@@ -78,6 +80,11 @@
         let nroInvoice = "";
         const VALOR_ENVIADOS = 1 ;
         const VALOR_PENDIENTES = 0;
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         /*
            Se encarga de limpiar la lista de registros seleccionados y listar los registros segun el tipo(radioButton) elegido.
         */
@@ -136,7 +143,7 @@
             } else if (document.getElementById("radioPendientes").checked) {
                 tipoRegistro = VALOR_PENDIENTES;
             }
-            listarInvoices()
+            listarInvoices();
         }
 
         /*
@@ -150,8 +157,6 @@
             }
             selectedIds.forEach(descargar);
             selectedIds = [];
-            listarInvoices();
-
         }
         /*
             Se encarga de descargar el PDF generado en base a los datos vinculados al Nro de Invoice provisto
@@ -186,63 +191,48 @@
         */
         function listarInvoices() {
             const url = `@Url.Action("GetInvoices", "App")?tipoRegistro=${encodeURIComponent(tipoRegistro)}&nroInvoice=${encodeURIComponent(nroInvoice)}`;
-
+            console.log(selectedIds);
             fetch(url)
-
                 .then(response => {
-
                     if (!response.ok) {
                         throw new Error("Error al conectar a la red");
                     }
                     return response.json();
-
                 })
-
-
                 .then(data => {
-
                     if (data !== null) {
-
                         if (data.length === 0) {
-
                             alert("No se encontró un registro con dicho número en la base de datos");
-
                         } else {
-
                             const tabla = document.getElementById('mi-tabla').getElementsByTagName('tbody')[0];
                             tabla.innerHTML = ''; // Limpiar el contenido actual de la tabla
                             data.forEach((item, index) => {
                                 const fechaFormateada = item.FECHAULTENV
-
                                     ? new Date(parseInt(item.FECHAULTENV.match(/-?\d+/)[0])).toLocaleDateString("es-ES")
-
                                     : new Date().toLocaleDateString("es-ES");
 
-
                                 const fila = document.createElement('tr');
-
+                                const isChecked = selectedIds.includes(item.FACTURA); // Verificar si el ID está en selectedIds
 
                                 fila.innerHTML = `
-                                <td>    
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="${item.FACTURA}" id="checkBox${index}">
-                                    </div>
-                                </td>
-                                <td>${item.FACTURA}</td>
-                                <td>${item.FECHA}</td>
-                                <td>${item.DESTINATARIO}</td>
-                                <td>${item.DIRECCION}</td>
-                                <td>${item.MAIL}</td>
-                                <td>${item.USUARIO}</td>
-                                <td>${fechaFormateada}</td>
-                                <td>${item.CANT_ENVIOS}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="${item.FACTURA}" id="checkBox${index}" ${isChecked ? 'checked' : ''}>
+                                        </div>
+                                    </td>
+                                    <td>${item.FACTURA}</td>
+                                    <td>${item.FECHA}</td>
+                                    <td>${item.DESTINATARIO}</td>
+                                    <td>${item.DIRECCION}</td>
+                                    <td>${item.MAIL}</td>
+                                    <td>${item.USUARIO}</td>
+                                    <td>${fechaFormateada}</td>
+                                    <td>${item.CANT_ENVIOS}</td>
                                 `;
-
 
                                 tabla.appendChild(fila);
                                 const checkbox = fila.querySelector(`#checkBox${index}`);
                                 checkbox.addEventListener('change', function () {
-
                                     const checkboxId = this.id; // Obtener el ID del checkbox
                                     if (this.checked) {
                                         selectedIds.push(item.FACTURA); // Agregar el valor de FACTURA al array
@@ -259,7 +249,6 @@
                         alert("No se recibieron datos válidos del servidor.");
                     }
                 })
-
                 .catch(error => {
                     alert("Error al obtener los resultados: " + error);
                 });
@@ -275,6 +264,12 @@
                 buscarRegistros();
             }
         });
-        document.getElementById("botonDescargar").addEventListener("click", descargarSeleccion);
+        document.getElementById("botonDescargar").addEventListener("click", function () {
+            descargarSeleccion();
+            sleep(50000)
+            console.log("Lsitando Invoices");
+            listarInvoices();
+
+});
     </script>
 }

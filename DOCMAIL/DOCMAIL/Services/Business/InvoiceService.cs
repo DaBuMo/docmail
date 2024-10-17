@@ -10,6 +10,9 @@ using DOCMAIL.Models;
 using System.Collections.Generic;
 using System.Data.Common;
 using PdfSharp.Pdf;
+using System.Web;
+using PdfSharp.Charting;
+using PdfSharp.Diagnostics;
 
 namespace DOCMAIL.Services.Business
 {
@@ -21,8 +24,8 @@ namespace DOCMAIL.Services.Business
         private SubtotalModel subtotal;
         private PieModel pie;
 
-        private string rutaLogo = "C:\\Users\\st2burgoda\\Desktop\\Real Docmail\\docmail\\DOCMAIL\\DOCMAIL\\Content\\Styles\\logo_invoices.png";
 
+        string rutaLogo = HttpContext.Current.Server.MapPath("~/Content/Styles/logo_invoices.png");
         /// <summary>
         /// Se encarga de construir y modelar un PDF de la Invoice en base a los datos conseguidos en la BD 
         /// </summary>
@@ -44,6 +47,9 @@ namespace DOCMAIL.Services.Business
             añadirCuerpoLogo(section);
             añadirNroInvoice(section);
             añadirCuerpoCabecera(section);
+
+            var corte = section.AddParagraph();
+            corte.Format.SpaceBefore = "1mm";
 
             // Body
             añadirTablaDetalle(section);
@@ -122,12 +128,16 @@ namespace DOCMAIL.Services.Business
         /// <param name="section">Seccion en la cual aplicaremos nuestro Nro de Invoice</param>
         private void añadirNroInvoice(Section section)
         {
+            FormattedText linea;
             Paragraph nro = section.AddParagraph();
 
-            nro.Format.SpaceBefore = "0.5cm";
+
+            nro.Format.SpaceBefore = "1mm";
             nro.Style = "Reference";
-            nro.AddFormattedText("PROFORMA COMMERCIAL INVOICE N°: ", TextFormat.Bold);
-            nro.AddText(cabecera.CICANCIN);
+            linea = nro.AddFormattedText("PROFORMA COMMERCIAL INVOICE N°: ", TextFormat.Bold);
+            linea.Font.Size = 9;
+            linea = nro.AddFormattedText(cabecera.CICANCIN);
+            linea.Font.Size = 10;
             nro.Format.Alignment = ParagraphAlignment.Center;
         }
 
@@ -137,38 +147,63 @@ namespace DOCMAIL.Services.Business
         /// <param name="section">Seccion en la cual aplicaremos nuestra cabecera</param>
         private void añadirCuerpoCabecera(Section section)
         {
-            Paragraph destinatarios = section.AddParagraph();
 
-            destinatarios.Format.SpaceBefore = "0.5cm";
+            Table table = section.AddTable();
+            table.Borders.Width = 0.75; // Grosor del borde
+            table.Borders.Color = Colors.Black; // Color del borde
+
+            Column column = table.AddColumn();
+            column.Width = Unit.FromCentimeter(16.3);
+
+            table.Format.Alignment = ParagraphAlignment.Center;
+
+            Row row = table.AddRow();
+
+            Paragraph destinatarios = row.Cells[0].AddParagraph();
+            destinatarios.Format.SpaceBefore = "1mm";
             destinatarios.Style = "Reference";
 
-            destinatarios.AddFormattedText("TO", TextFormat.Bold);
+            FormattedText linea = destinatarios.AddFormattedText("TO", TextFormat.Bold);
+            linea.Font.Size = 9;
             destinatarios.AddTab();
-            destinatarios.AddFormattedText("CONSIGNEE", TextFormat.Bold);
+            linea = destinatarios.AddFormattedText("CONSIGNEE", TextFormat.Bold);
+            linea.Font.Size = 9;
             destinatarios.AddLineBreak();
-            destinatarios.AddText($"{cabecera.CICANOMD}");
-            destinatarios.AddTab();
-            destinatarios.AddText($"{cabecera.CICANOMC}");
 
-            destinatarios = section.AddParagraph();
-            destinatarios.Style = "Reference";
-            destinatarios.Format.SpaceBefore = "0.2cm";
-
-            destinatarios.AddText($"{cabecera.CICADIRD}");
+            linea = destinatarios.AddFormattedText($"{cabecera.CICANOMD}");
+            linea.Font.Size = 10;
             destinatarios.AddTab();
-            destinatarios.AddText($"{cabecera.CICADIRC}");
+            linea = destinatarios.AddFormattedText($"{cabecera.CICANOMC}");
+            linea.Font.Size = 10;
+
             destinatarios.AddLineBreak();
-            destinatarios.AddText($"{cabecera.CICALOCD}");
+
+            linea = destinatarios.AddFormattedText($"{cabecera.CICADIRD}");
+            linea.Font.Size = 10;
             destinatarios.AddTab();
-            destinatarios.AddText($"{cabecera.CICALOCC}");
+            linea = destinatarios.AddFormattedText($"{cabecera.CICADIRC}");
+            linea.Font.Size = 10;
 
-            destinatarios = section.AddParagraph();
-            destinatarios.Style = "Reference";
-
-            destinatarios.AddFormattedText($"{cabecera.CICACOPD} · {cabecera.CICAPAID}", TextFormat.Bold);
+            destinatarios.AddLineBreak();
+            linea = destinatarios.AddFormattedText($"{cabecera.CICALOCD}");
+            linea.Font.Size = 10;
             destinatarios.AddTab();
-            destinatarios.AddFormattedText($"{cabecera.CICACOPC} · {cabecera.CICAPAIC}", TextFormat.Bold);
+            linea = destinatarios.AddFormattedText($"{cabecera.CICALOCC}");
+            linea.Font.Size = 10;
 
+            destinatarios.AddLineBreak();
+            linea = destinatarios.AddFormattedText($"{cabecera.CICACOPD} · {cabecera.CICAPAID}");
+            linea.Font.Size = 10;
+            destinatarios.AddTab();
+            linea = destinatarios.AddFormattedText($"{cabecera.CICACOPC} · {cabecera.CICAPAIC}");
+            linea.Font.Size = 10;
+
+
+            destinatarios.Format.SpaceAfter = "0.3cm"; // Margen inferior
+
+            // Finalizar la tabla
+            row.Cells[0].Borders.Width = 0.75; // Grosor del borde de la celda
+            row.Cells[0].Borders.Color = Colors.Black; // Color del borde de la celda
         }
 
         /// <summary>
@@ -193,19 +228,19 @@ namespace DOCMAIL.Services.Business
             column = table.AddColumn("4.8cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("0.2cm");
+            column = table.AddColumn("0.1cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("2.5cm");
+            column = table.AddColumn("2cm");
             column.Format.Alignment = ParagraphAlignment.Center;
 
-            column = table.AddColumn("2.6cm");
+            column = table.AddColumn("2cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("1.9cm");
+            column = table.AddColumn("1.4cm");
             column.Format.Alignment = ParagraphAlignment.Right;
 
-            column = table.AddColumn("2.3cm");
+            column = table.AddColumn("2.1cm");
             column.Format.Alignment = ParagraphAlignment.Right;
             column.Shading.Color = Color.FromRgb(240, 240, 240);
 
@@ -234,8 +269,8 @@ namespace DOCMAIL.Services.Business
             {
                 row.Cells[i].AddParagraph(item);
                 row.Cells[i].Borders.Color = Colors.Black;
-                row.Cells[i].Format.Alignment = ParagraphAlignment.Left;
-                row.Cells[i].VerticalAlignment = VerticalAlignment.Bottom;
+                row.Cells[i].Format.Alignment = ParagraphAlignment.Center;
+                row.Cells[i].VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
                 i++;
             }
         }
@@ -289,8 +324,8 @@ namespace DOCMAIL.Services.Business
             table.Rows.LeftIndent = 0;
             table.Rows.Alignment = RowAlignment.Right;
 
-            Column column1 = table.AddColumn(Unit.FromCentimeter(12)); 
-            Column column2 = table.AddColumn(Unit.FromCentimeter(2.3));
+            Column column1 = table.AddColumn(Unit.FromCentimeter(10.3)); 
+            Column column2 = table.AddColumn(Unit.FromCentimeter(2.1));
             column2.Shading.Color = Color.FromRgb(240, 240, 240);
 
             column1.Format.Alignment = ParagraphAlignment.Left;
@@ -327,43 +362,53 @@ namespace DOCMAIL.Services.Business
         /// <param name="section">Seccion en la cual aplicaremos nuestro footer</param>
         private void agregarPie(Section section)
         {
+            FormattedText linea;
             Paragraph paragraph = section.AddParagraph();
-
             paragraph.Format.SpaceBefore = "0.25cm";
-            paragraph.AddFormattedText("PACKING :", TextFormat.Bold);
+
+            linea = paragraph.AddFormattedText("PACKING :", TextFormat.Bold);
+            linea.Font.Size = 8;
             paragraph.AddTab();
-            paragraph.AddFormattedText("Net Weight (Kg): ", TextFormat.Bold);
-            paragraph.AddText(pie.CIPINETW);
+            linea = paragraph.AddFormattedText("Net Weight (Kg): ", TextFormat.Bold);
+            linea.Font.Size = 8;
+            linea = paragraph.AddFormattedText(pie.CIPINETW);
+            linea.Font.Size = 9;
             paragraph.AddFormattedText("  ·  ", TextFormat.Bold);
-            paragraph.AddFormattedText("Gross Weight (Kg): ", TextFormat.Bold);
-            paragraph.AddText(pie.CIPIGROW);
+            linea = paragraph.AddFormattedText("Gross Weight (Kg): ", TextFormat.Bold);
+            linea.Font.Size = 8;
+            linea = paragraph.AddFormattedText(pie.CIPIGROW);
+            linea.Font.Size = 9;
             paragraph.AddLineBreak();
             paragraph.AddTab();
             paragraph.AddTab();
-            paragraph.AddFormattedText("Measurement (M3): ", TextFormat.Bold);
-            paragraph.AddText(pie.CIPIMEAS);
+            linea = paragraph.AddFormattedText("Measurement (M3): ", TextFormat.Bold);
+            linea.Font.Size = 8;
+            linea = paragraph.AddFormattedText(pie.CIPIMEAS);
+            linea.Font.Size = 9;
             paragraph.AddFormattedText("  ·  ", TextFormat.Bold);
-            paragraph.AddFormattedText("Container: ", TextFormat.Bold);
-            paragraph.AddText(pie.CIPICONT);
+            linea = paragraph.AddFormattedText("Container: ", TextFormat.Bold);
+            linea.Font.Size = 8;
+            linea = paragraph.AddFormattedText(pie.CIPICONT);
+            linea.Font.Size = 9;
 
-            var parrafoAnt = agregarParrafo(section, "VESSEL :", pie.CIPIVESS,2);
-            agregarExtralinea(parrafoAnt, "MARITIME :", pie.CIPIMARI, 2,false);
+            var parrafoAnt = agregarParrafo(section, "VESSEL :", pie.CIPIVESS,2,tamaño:8);
+            agregarExtralinea(parrafoAnt, "MARITIME :", pie.CIPIMARI, 2,false, tamaño: 8);
 
-            agregarParrafo(section, "OBSERVATION :", pie.CIPIOBS1, 1);
-            agregarParrafo(section, "MARITIME :", pie.CIPIMARI, 2);
+            agregarParrafo(section, "OBSERVATION :", pie.CIPIOBS1, 1, tamaño: 8);
+            agregarParrafo(section, "MARITIME :", pie.CIPIMARI, 2, tamaño: 8);
 
-            parrafoAnt = agregarParrafo(section, "Payment Terms :",pie.CIPIPAYM, 1);
-            agregarExtralinea(parrafoAnt, "Conditions :", pie.CIPICOND, 2, false);
+            parrafoAnt = agregarParrafo(section, "Payment Terms :",pie.CIPIPAYM, 1, tamaño: 8);
+            agregarExtralinea(parrafoAnt, "Conditions :", pie.CIPICOND, 2, false, tamaño: 8);
 
-            agregarParrafo(section, "NOTIFY (1) :", pie.CIPINO11, 1);
+            agregarParrafo(section, "NOTIFY (1) :", pie.CIPINO11, 1, tamaño: 8);
 
-            parrafoAnt = agregarParrafo(section, "NOTIFY (2) :", pie.CIPINO12, 1);
-            agregarExtralinea(parrafoAnt, "DOCUMENT :", pie.CIPIDOC1, 3, true);
+            parrafoAnt = agregarParrafo(section, "NOTIFY (2) :", pie.CIPINO12, 1, tamaño: 8);
+            agregarExtralinea(parrafoAnt, "DOCUMENT :", pie.CIPIDOC1, 3, true, tamaño: 8);
 
             Paragraph footer = section.Footers.Primary.AddParagraph();
             footer.AddText("PIRELLI NEUMATICOS S.A.I.C.· Cervantes 1901 ·1722 - Merlo · Argentina\n");
             footer.AddText($"Invoice Nro: {pie.CIPINCIN}");
-            footer.Format.Font.Size = 7;
+            footer.Format.Font.Size = 8;
             footer.Format.Alignment = ParagraphAlignment.Center;
         }
 
@@ -375,15 +420,24 @@ namespace DOCMAIL.Services.Business
         /// <param name="contenido"> </param>
         /// <param name="tabs"> Cantidad tabulaciones </param>
         /// <param name="style"> Style que se le aplicara al parrafo </param>
-        private Paragraph agregarParrafo(Section section,string tipo, string contenido,int tabs,string style = "")
+        private Paragraph agregarParrafo(Section section,string tipo, string contenido,int tabs,string style = "", int tamaño = 9,bool negrilla = true)
         {
+            FormattedText linea;
             Paragraph paragraph = section.AddParagraph();
             if (style != "")
             {
                 paragraph.Style = style;
             }
             paragraph.Format.SpaceBefore = "0.25cm";
-            paragraph.AddFormattedText(tipo, TextFormat.Bold);
+            if (negrilla)
+            {
+                linea = paragraph.AddFormattedText(tipo, TextFormat.Bold);
+            }
+            else
+            {
+                linea = paragraph.AddFormattedText(tipo);
+            }
+            linea.Font.Size = tamaño;
             agregarTabs(paragraph, tabs);
             paragraph.AddText(contenido);
             return paragraph;        
@@ -397,8 +451,9 @@ namespace DOCMAIL.Services.Business
         /// <param name="contenido"> </param>
         /// <param name="tabs"> Cantidad tabulaciones </param>
         /// <param name="mismaLinea"> Indica si se agrega o no un salto de linea antes de agregar la nueva linea </param>
-        private void agregarExtralinea(Paragraph paragraph,string tipo,string contenido,int tabs,bool mismaLinea)
+        private void agregarExtralinea(Paragraph paragraph,string tipo,string contenido,int tabs,bool mismaLinea,int tamaño = 9,bool negrilla = true)
         {
+            FormattedText linea;
             if (!mismaLinea)
             {
                 paragraph.AddLineBreak();
@@ -408,9 +463,21 @@ namespace DOCMAIL.Services.Business
                 agregarTabs(paragraph, tabs);
                 tabs--;
             }
-            paragraph.AddFormattedText(tipo, TextFormat.Bold);
+
+            if (negrilla)
+            {
+                linea = paragraph.AddFormattedText(tipo, TextFormat.Bold);
+            }
+            else
+            {
+                linea = paragraph.AddFormattedText(tipo);
+            }
+
+            linea.Font.Size = tamaño;
             agregarTabs(paragraph, tabs);
-            paragraph.AddText(contenido);
+            linea = paragraph.AddFormattedText(contenido);
+            linea.Font.Size = tamaño+1;
+
         }
 
         /// <summary>
